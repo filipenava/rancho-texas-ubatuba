@@ -1,0 +1,82 @@
+---
+import { videos, type VideoName } from '../data/videos';
+interface Props {
+  name: VideoName;
+  auto?: boolean;
+  eager?: boolean;
+  /** Faz o filme preencher a altura do bloco, como uma imagem de fundo. */
+  fill?: boolean;
+}
+const { name, auto = true, eager = false, fill = false } = Astro.props;
+const clip = videos[name];
+const id = `video-${name}-${crypto.randomUUID().slice(0, 8)}`;
+---
+
+<figure
+  class={fill ? 'film film--fill' : 'film'}
+  data-film
+  data-auto={String(auto)}
+  data-title={clip.title}
+  data-motion-reveal
+>
+  <div class="film-frame" style={`--film-ratio:${clip.width}/${clip.height}`}>
+    <img
+      class="film-poster"
+      src={`/videos/${name}-poster-640.webp`}
+      srcset={`/videos/${name}-poster-640.webp 640w, /videos/${name}-poster-960.webp 960w`}
+      sizes="(max-width: 600px) calc(100vw - 40px), 50vw"
+      width={clip.width}
+      height={clip.height}
+      alt={clip.description}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+    <video
+      id={id}
+      class="film-video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      data-small={`/videos/${name}-640.mp4`}
+      data-large={`/videos/${name}-960.mp4`}
+      width={clip.width}
+      height={clip.height}
+      aria-label={clip.title}
+      aria-describedby={`${id}-description`}></video>
+    <span class="film-badge" aria-hidden="true"
+      ><span></span>
+      {
+        name === 'ubatuba' ? 'PAISAGENS DE UBATUBA' : 'CENAS DA FAZENDINHA'
+      }</span
+    >
+    <button
+      class="film-toggle"
+      type="button"
+      aria-controls={id}
+      aria-label={`Reproduzir vídeo: ${clip.title}`}
+      hidden
+      ><span class="film-toggle-icon" aria-hidden="true">▶</span><span
+        data-film-label>Ver em movimento</span
+      ><span class="film-duration">{Math.round(clip.duration)}s</span></button
+    >
+    <p class="film-status" role="status" hidden></p>
+    <noscript
+      ><a class="film-fallback" href={`/videos/${name}-640.mp4`}
+        >Assistir ao vídeo · {Math.round(clip.duration)}s</a
+      ></noscript
+    >
+  </div>
+  <figcaption id={`${id}-description`}>
+    <span
+      >{
+        name === 'ubatuba' ? 'Paisagens de Ubatuba' : 'Memórias na fazendinha'
+      }</span
+    ><span>Filme sem áudio · {Math.round(clip.duration)}s</span><span
+      class="sr-only">{clip.description}</span
+    >
+  </figcaption>
+</figure>
+<script>
+  import '../scripts/video';
+</script>

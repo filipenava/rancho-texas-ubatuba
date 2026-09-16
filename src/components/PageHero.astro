@@ -1,0 +1,23 @@
+---
+import Photo from './Photo.astro';
+
+interface Props {
+  title: string;
+  label: string;
+  description?: string;
+  image: string;
+  /** Descrição da fotografia. Sem ela o alt repetiria o H1, que não descreve nada. */
+  imageAlt: string;
+}
+const { title, label, description, image, imageAlt } = Astro.props;
+---
+
+<section class="page-hero">
+  <Photo name={image} alt={imageAlt} eager sizes="100vw" /><div
+    class="container"
+  >
+    <span class="eyebrow">{label}</span><h1>{title}</h1>{
+      description && <p>{description}</p>
+    }
+  </div>
+</section>

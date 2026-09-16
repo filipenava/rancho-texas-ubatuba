@@ -1,0 +1,45 @@
+---
+import metadata from '../../research/selected-images.json';
+interface Props {
+  name: string;
+  alt: string;
+  class?: string;
+  eager?: boolean;
+  sizes?: string;
+  /** Usado para ajustar o object-position quando o assunto não está no centro da foto. */
+  style?: string;
+}
+const {
+  name,
+  alt,
+  class: className,
+  eager = false,
+  sizes = '(max-width: 700px) 100vw, 50vw',
+  style,
+} = Astro.props;
+const size = metadata[name as keyof typeof metadata] || {
+  width: 1920,
+  height: 1440,
+};
+const widths = [400, 640, 800, 1200, 1920].filter(
+  (w, i, all) =>
+    i === 0 || Math.min(w, size.width) !== Math.min(all[i - 1], size.width),
+);
+const srcset = widths
+  .map((w) => `/images/${name}-${w}.webp ${Math.min(w, size.width)}w`)
+  .join(', ');
+---
+
+<img
+  src={`/images/${name}-1200.webp`}
+  srcset={srcset}
+  sizes={sizes}
+  alt={alt}
+  class={className}
+  style={style}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : 'auto'}
+  decoding="async"
+  width={size.width}
+  height={size.height}
+/>

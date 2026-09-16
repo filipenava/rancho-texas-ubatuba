@@ -1,0 +1,17 @@
+{
+  "source": "https://irp.cdn-website.com/73fc2651/files/73fc2651_withFlex_1.min.css?v=1",
+  "extractedAt": "2026-09-16",
+  "original": {
+    "brown": "#4a342d",
+    "terracotta": "#a4725d",
+    "gold": "#d9ba7d",
+    "charcoal": "#272a2f",
+    "white": "#ffffff"
+  },
+  "redesignSupportingColors": {
+    "green": "#354d40",
+    "cream": "#f8f6f0",
+    "paper": "#fffefa",
+    "accessibleSmallTerracottaText": "#93604c"
+  }
+}

@@ -1,0 +1,38 @@
+---
+import Icon from './Icon.astro';
+import { nearby } from '../data/site';
+---
+
+<section class="nearby-section section" id="por-perto">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">A POUCOS MINUTOS DAQUI</span><h2>
+          Perto de tudo<br />que vale <em>a viagem.</em>
+        </h2>
+      </div><p>
+        O Rancho fica na entrada de Ubatuba, na Rodovia Oswaldo Cruz. Menos
+        tempo no trânsito, mais tempo aproveitando.
+      </p>
+    </div><ul class="nearby-grid">
+      {
+        nearby.map((n) => (
+          <li class="nearby-card">
+            <>
+              <span class="nearby-icon">
+                <Icon name={n.icon} size={22} />
+              </span>
+              <div>
+                <>
+                  <span class="nearby-distance">{n.distance}</span>
+                  <h3>{n.name}</h3>
+                  <p>{n.text}</p>
+                </>
+              </div>
+            </>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,212 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Photo from '../../components/Photo.astro';
+import Icon from '../../components/Icon.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import CTA from '../../components/CTA.astro';
+import Video from '../../components/Video.astro';
+import { videos, type VideoName } from '../../data/videos';
+import { albums, albumSrc, albumSrcset, totalPhotos } from '../../data/albums';
+
+const photos = [
+  { name: 'rancho-lago', label: 'O Rancho e seu lago', category: 'Natureza' },
+  { name: 'piscina', label: 'Piscina ao ar livre', category: 'Lazer' },
+  {
+    name: 'fazendinha',
+    label: 'Descobertas na fazendinha',
+    category: 'Fazendinha',
+  },
+  { name: 'suite-duplex', label: 'Suíte Duplex', category: 'Acomodações' },
+  {
+    name: 'cafe-da-manha',
+    label: 'Café da manhã incluso',
+    category: 'Estrutura',
+  },
+  { name: 'rio', label: 'O rio e a Mata Atlântica', category: 'Natureza' },
+  {
+    name: 'cabrinha',
+    label: 'Os moradores da fazendinha',
+    category: 'Fazendinha',
+  },
+  {
+    name: 'restaurante',
+    label: 'Restaurante com pratos típicos',
+    category: 'Estrutura',
+  },
+  { name: 'pesqueiro', label: 'Um bom dia de pescaria', category: 'Lazer' },
+  { name: 'pavao', label: 'O pavão-branco do Rancho', category: 'Fazendinha' },
+  { name: 'costela', label: 'Costela na brasa', category: 'Estrutura' },
+  { name: 'suite-eco', label: 'Suíte Eco Bloco', category: 'Acomodações' },
+  { name: 'camping', label: 'Dias de camping', category: 'Estrutura' },
+  { name: 'ovelha', label: 'A ovelha Vitória', category: 'Fazendinha' },
+  {
+    name: 'mata-atlantica',
+    label: 'Mata Atlântica preservada',
+    category: 'Natureza',
+  },
+  { name: 'jardim', label: 'Verde por todos os lados', category: 'Natureza' },
+  { name: 'parquinho', label: 'Tempo de brincar', category: 'Lazer' },
+  { name: 'suite-roca', label: 'Suíte da Roça', category: 'Acomodações' },
+  { name: 'ponei', label: 'O pônei João Floquinho', category: 'Fazendinha' },
+  { name: 'casamentos', label: 'Celebrações no Rancho', category: 'Estrutura' },
+  { name: 'cabra', label: 'A cabra Dona Jô', category: 'Fazendinha' },
+  {
+    name: 'casamento-cerimonia',
+    label: 'Cerimônia em meio ao verde',
+    category: 'Estrutura',
+  },
+  {
+    name: 'vaquinhas',
+    label: 'Os bezerros da fazendinha',
+    category: 'Fazendinha',
+  },
+  { name: 'lago-patos', label: 'Os patos do lago', category: 'Natureza' },
+  { name: 'passaros', label: 'Aves da Mata Atlântica', category: 'Natureza' },
+  {
+    name: 'suite-casa-rosa',
+    label: 'Suíte Casa Rosa',
+    category: 'Acomodações',
+  },
+  { name: 'praia', label: 'As praias de Ubatuba', category: 'Natureza' },
+  { name: 'suite-standard', label: 'Suíte Standard', category: 'Acomodações' },
+];
+---
+
+<Layout
+  title="Galeria de fotos da pousada | Rancho Texas Ubatuba"
+  description={`${totalPhotos} fotos reais do Rancho Texas Ubatuba, em ${albums.length} álbuns: suítes, natureza, fazendinha, piscina, gastronomia, camping, aves e casamentos.`}
+  breadcrumb={[{ label: 'Galeria', href: '/galeria' }]}
+>
+  <PageHero
+    title="Um pedacinho do que espera você."
+    label="Galeria"
+    description={`${totalPhotos} fotografias reais, organizadas em ${albums.length} álbuns.`}
+    image="jardim"
+    imageAlt="Jardim do Rancho Texas Ubatuba com gramado, palmeiras e o lago ao fundo"
+  />
+  <section class="section container">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">O ACERVO COMPLETO</span><h2>
+          Escolha por onde<br />quer <em>começar.</em>
+        </h2>
+      </div><p>
+        Cada álbum reúne as fotografias de um canto do Rancho. Nada de imagem de
+        banco: é tudo daqui.
+      </p>
+    </div><ul class="album-list">
+      {
+        albums.map((a) => (
+          <li>
+            <a class="album-card" href={`/galeria/${a.slug}`}>
+              <>
+                <img
+                  src={albumSrc(a.cover, 560)}
+                  srcset={albumSrcset(a.cover)}
+                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 300px"
+                  alt={a.heading}
+                  width="560"
+                  height="420"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div>
+                  <>
+                    <span class="album-count">{a.photos.length} fotos</span>
+                    <h3>{a.title}</h3>
+                    <span class="circle-arrow">
+                      <Icon name="arrow" />
+                    </span>
+                  </>
+                </div>
+              </>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <section class="section container highlights-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">SE VOCÊ TEM POUCO TEMPO</span><h2>
+          Os <em>destaques.</em>
+        </h2>
+      </div><p>Uma seleção rápida do que melhor representa o Rancho.</p>
+    </div><div class="gallery-filters" aria-label="Filtrar fotos">
+      {
+        [
+          'Todas',
+          'Natureza',
+          'Lazer',
+          'Fazendinha',
+          'Acomodações',
+          'Estrutura',
+        ].map((c, i) => (
+          <button
+            type="button"
+            data-filter={c}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+          >
+            {c}
+          </button>
+        ))
+      }
+    </div><p class="sr-only" data-gallery-status aria-live="polite"></p><div
+      class="gallery-grid"
+    >
+      {
+        photos.map((p) => (
+          <button
+            class="gallery-item"
+            data-category={p.category}
+            data-photo={`/images/${p.name}-1920.webp`}
+            data-caption={p.label}
+            aria-label={`Ampliar foto: ${p.label}`}
+          >
+            <>
+              <Photo
+                name={p.name}
+                alt={p.label}
+                sizes="(max-width: 600px) 50vw, (max-width: 900px) 50vw, 33vw"
+              />
+              <span>{p.label} ↗</span>
+            </>
+          </button>
+        ))
+      }
+    </div>
+  </section>
+  <section class="film-gallery section" id="filmes">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">PEQUENOS FILMES, BOAS LEMBRANÇAS</span><h2>
+            Agora, imagine <em>você aqui.</em>
+          </h2>
+        </div><p>
+          Um encontro com os animais.<br />Uma pausa para olhar o mar.
+        </p>
+      </div><div class="film-gallery-grid">
+        {
+          (Object.keys(videos) as VideoName[]).map((name) => (
+            <article>
+              <>
+                <Video name={name} auto={false} />
+                <h3>
+                  <a href={`/videos/${videos[name].slug}`}>
+                    {videos[name].title}
+                  </a>
+                </h3>
+                <a class="text-link" href={`/videos/${videos[name].slug}`}>
+                  Conheça a história do vídeo →
+                </a>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section><CTA /><Lightbox />
+</Layout>

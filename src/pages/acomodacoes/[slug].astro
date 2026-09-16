@@ -1,0 +1,100 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Photo from '../../components/Photo.astro';
+import Icon from '../../components/Icon.astro';
+import RoomCard from '../../components/RoomCard.astro';
+import { rooms, site } from '../../data/site';
+export function getStaticPaths() {
+  return rooms.map((room) => ({
+    params: { slug: room.slug },
+    props: { room },
+  }));
+}
+const { room } = Astro.props;
+const variants = 'variants' in room ? room.variants : undefined;
+---
+
+<Layout
+  title={`${room.name} em Ubatuba${room.size ? ` · ${room.size}` : ''} | Rancho Texas`}
+  description={room.meta}
+  image={room.image}
+  breadcrumb={[
+    { label: 'Acomodações', href: '/acomodacoes' },
+    { label: room.name, href: `/acomodacoes/${room.slug}` },
+  ]}
+>
+  <PageHero
+    title={room.name}
+    label={room.name}
+    description={room.tag}
+    image={room.image}
+    imageAlt={`Interior da ${room.name} do Rancho Texas Ubatuba`}
+  />
+  <section class="section container">
+    <div class="detail-grid">
+      <Photo name={room.image} alt={`Interior da ${room.name}`} /><div
+        class="detail-copy"
+      >
+        <span class="eyebrow">{room.size || 'ACOMODAÇÃO NO RANCHO'}</span><h2>
+          Uma pausa<br />que faz <em>bem.</em>
+        </h2><p>{room.text}</p><ul class="feature-list">
+          {
+            room.amenities.map((a) => (
+              <li>
+                <Icon name="check" size={17} />
+                {a}
+              </li>
+            ))
+          }
+        </ul><a class="button" href="/#reservar"
+          >Consultar datas e valores <Icon name="arrow" size={20} /></a
+        >{
+          variants && (
+            <div class="variant-box">
+              <>
+                <span class="eyebrow">CONFIGURAÇÕES DISPONÍVEIS</span>
+                <ul class="variant-list">
+                  {variants.map((v) => (
+                    <li>
+                      <>
+                        <strong>{v.name}</strong>
+                        <span>
+                          <Icon name="area" size={15} />
+                          {v.size}
+                        </span>
+                        <span>
+                          <Icon name="bed" size={15} />
+                          {v.beds}
+                        </span>
+                      </>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            </div>
+          )
+        }<div class="info-box">
+          Escolha esta categoria no motor de reservas, conforme a
+          disponibilidade. As fotos apresentam a acomodação; a disposição dos
+          móveis pode variar entre unidades.
+        </div><a href={site.whatsapp} class="text-link"
+          >Tire suas dúvidas com a equipe <Icon name="arrow" size={18} /></a
+        >
+      </div>
+    </div><div class="section-heading" style="margin-top:80px">
+      <h2>Outros jeitos de <em>ficar.</em></h2><a
+        class="text-link"
+        href="/acomodacoes"
+        >Ver todas as suítes <Icon name="arrow" size={18} /></a
+      >
+    </div><div class="room-grid">
+      {
+        rooms
+          .filter((r) => r.slug !== room.slug)
+          .slice(0, 3)
+          .map((room) => <RoomCard room={room} />)
+      }
+    </div>
+  </section>
+</Layout>

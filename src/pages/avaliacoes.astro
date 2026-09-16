@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Testimonial from '../components/Testimonial.astro';
+import Icon from '../components/Icon.astro';
+import CTA from '../components/CTA.astro';
+import { testimonials, site } from '../data/site';
+
+/**
+ * Assuntos que mais se repetem nas avaliações publicadas nesta página,
+ * em ordem de recorrência. A comida aparece em seis das sete.
+ */
+const recorrentes = [
+  { icon: 'utensils', label: 'A comida' },
+  { icon: 'leaf', label: 'A tranquilidade' },
+  { icon: 'people', label: 'O atendimento' },
+  { icon: 'coffee', label: 'O café da manhã' },
+  { icon: 'heart', label: 'Os animais' },
+];
+---
+
+<Layout
+  title="Avaliações de hóspedes | Rancho Texas Ubatuba"
+  description={`${testimonials.length} avaliações de quem já se hospedou no Rancho Texas Ubatuba, transcritas na íntegra do Google e das redes da pousada.`}
+  image="rancho-lago"
+  breadcrumb={[{ label: 'Avaliações', href: '/avaliacoes' }]}
+>
+  <PageHero
+    title="O que dizem quem já esteve aqui."
+    label="Avaliações"
+    description={`${testimonials.length} comentários de hóspedes, na íntegra.`}
+    image="piscina"
+    imageAlt="Piscina ao ar livre do Rancho Texas Ubatuba, cercada de vegetação e palmeiras"
+  />
+  <section class="section container">
+    <div class="page-intro">
+      <span class="eyebrow">SEM FILTRO</span><h2>
+        Não somos nós<br />que <em>contamos.</em>
+      </h2><p>
+        Todas as avaliações abaixo foram publicadas por hóspedes no Google e nas
+        redes do Rancho. Estão transcritas na íntegra, com correção apenas de
+        pontuação e acentuação. Se você já se hospedou, sua opinião ajuda quem
+        está decidindo agora.
+      </p>
+    </div><ul class="recurring-list">
+      {
+        recorrentes.map((r) => (
+          <li>
+            <>
+              <Icon name={r.icon} size={20} />
+              <span>{r.label}</span>
+            </>
+          </li>
+        ))
+      }
+    </ul><p class="recurring-note">
+      Assuntos mais citados nas {testimonials.length} avaliações desta página, em
+      ordem de recorrência.
+    </p>
+  </section><Testimonial />
+  <section class="section container">
+    <div class="info-box">
+      Se algo não saiu como você esperava durante a estadia, fale com a equipe
+      antes de ir embora: <a href={site.whatsapp} class="inline-link"
+        >o WhatsApp do Rancho</a
+      > costuma resolver na hora.
+    </div>
+  </section><CTA image="rancho-lago" />
+</Layout>

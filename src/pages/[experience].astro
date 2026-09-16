@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
+import CTA from '../components/CTA.astro';
+import Video from '../components/Video.astro';
+import Animals from '../components/Animals.astro';
+import AlbumTeaser from '../components/AlbumTeaser.astro';
+import Testimonial from '../components/Testimonial.astro';
+import { experiences } from '../data/experiences';
+import { site } from '../data/site';
+export function getStaticPaths() {
+  return experiences.map((page) => ({
+    params: { experience: page.slug },
+    props: { page },
+  }));
+}
+const { page } = Astro.props;
+const consult = page.slug === 'camping' || page.slug === 'casamentos';
+---
+
+<Layout
+  title={page.title}
+  description={page.description}
+  image={page.image}
+  breadcrumb={[{ label: page.label, href: `/${page.slug}` }]}
+>
+  <PageHero
+    title={page.heading}
+    label={page.label}
+    description={page.sub}
+    image={page.image}
+    imageAlt={page.heroAlt}
+  />
+  <section class="section container">
+    <div class="detail-grid">
+      {
+        page.slug === 'fazendinha' ? (
+          <Video name="fazendinha" />
+        ) : (
+          <Photo name={page.image} alt={page.heading} />
+        )
+      }<div class="detail-copy">
+        <span class="eyebrow">{page.eyebrow}</span><h2
+          set:html={page.bodyHeading}
+        />{page.paragraphs.map((p) => <p>{p}</p>)}<ul class="feature-list">
+          {
+            page.features.map((f) => (
+              <li>
+                <Icon name="check" size={17} />
+                {f}
+              </li>
+            ))
+          }
+        </ul><a
+          class="button"
+          href={consult
+            ? `${site.whatsapp}?text=${encodeURIComponent(`Olá! Gostaria de informações sobre ${page.label.toLowerCase()} no Rancho Texas.`)}`
+            : '/#reservar'}
+          >{consult ? 'Converse com nossa equipe' : 'Planeje sua estadia'}<Icon
+            name="arrow"
+            size={18}
+          /></a
+        >
+      </div>
+    </div><div class="secondary-grid">
+      {
+        page.cards.map((c) => (
+          <article class="secondary-card">
+            <>
+              <Photo
+                name={c.image}
+                alt={c.title}
+                sizes="(max-width: 600px) 100vw, 33vw"
+              />
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </>
+          </article>
+        ))
+      }
+    </div><div class="info-box">{page.note}</div>
+  </section>{page.slug === 'fazendinha' && <Animals />}<AlbumTeaser
+    slug={page.album}
+  /><Testimonial limit={3} /><CTA />
+</Layout>

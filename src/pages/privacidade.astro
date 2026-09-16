@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Privacidade e navegação | Rancho Texas Ubatuba"
+  description="Informações sobre o funcionamento deste site, links de reservas, atendimento e contato para dúvidas relacionadas à privacidade."
+>
+  <article class="prose container">
+    <span class="eyebrow">RANCHO TEXAS UBATUBA</span><h1>
+      Privacidade e navegação
+    </h1><p>
+      Esta página descreve como funciona esta versão do site e os canais
+      utilizados para reservas e atendimento.
+    </p><h2>Consulta de disponibilidade</h2><p>
+      Ao pesquisar uma estadia, as datas, a quantidade de adultos, as idades das
+      crianças e o eventual código promocional são enviados ao motor de reservas
+      Omnibees por meio de um link. O pagamento e os dados pessoais necessários
+      para concluir a reserva são tratados no ambiente da Omnibees, conforme os
+      termos apresentados por esse serviço.
+    </p><h2>Contato com o Rancho</h2><p>
+      Os links de WhatsApp e e-mail abrem serviços externos. As informações que
+      você decidir compartilhar nesses canais serão utilizadas no atendimento da
+      sua solicitação. Consulte também as políticas dos respectivos serviços.
+    </p><h2>Navegação neste site</h2><p>
+      Esta versão não instala cookies de publicidade ou ferramentas de análise
+      de audiência. As imagens e fontes são servidas pelo próprio site. O
+      provedor de hospedagem pode processar registros técnicos necessários à
+      operação, como endereço IP e data de acesso, conforme sua configuração e
+      suas políticas.
+    </p><h2>Mapa da localização</h2><p>
+      A página Como chegar exibe um mapa do OpenStreetMap, carregado em um
+      quadro do site openstreetmap.org somente quando você rola até ele. Esse
+      serviço pode registrar o seu endereço IP para entregar as imagens do mapa,
+      conforme a política da OpenStreetMap Foundation, e não instala cookies de
+      publicidade. O botão de rota abre o Google Maps em uma nova aba, já fora
+      deste site.
+    </p><h2>Dúvidas e solicitações</h2><p>
+      Para esclarecer dúvidas sobre informações fornecidas ao Rancho ou
+      solicitar atendimento relacionado aos seus dados, entre em contato por <a
+        href={`mailto:${site.email}`}>{site.email}</a
+      >.
+    </p>
+  </article>
+</Layout>

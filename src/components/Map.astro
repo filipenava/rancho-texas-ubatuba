@@ -1,0 +1,29 @@
+---
+import { site } from '../data/site';
+
+/**
+ * Mapa embutido via OpenStreetMap: não exige chave de API nem deixa cookies de
+ * rastreio, então a página de privacidade continua valendo. O botão de rota
+ * segue apontando para o Google Maps, que é o que a maioria usa para navegar.
+ */
+const { lat, lng } = site.geo;
+const pad = 0.011;
+const bbox = [lng - pad, lat - pad, lng + pad, lat + pad]
+  .map((n) => n.toFixed(5))
+  .join('%2C');
+const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lng}`;
+---
+
+<div class="map-frame">
+  <iframe
+    src={src}
+    title={`Mapa com a localização do ${site.name}, na ${site.street}`}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <a
+    class="map-open"
+    href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`}
+    target="_blank"
+    rel="noopener noreferrer">Ampliar o mapa ↗</a
+  >
+</div>

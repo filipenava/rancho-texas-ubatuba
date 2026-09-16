@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import { amenities } from '../data/site';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  text?: string;
+}
+const {
+  eyebrow = 'TUDO POR AQUI MESMO',
+  heading = 'O que espera<br />por <em>você.</em>',
+  text = 'Da primeira xícara de café ao fim de tarde à beira do lago, a estrutura do Rancho foi pensada para você não precisar sair para aproveitar o dia.',
+} = Astro.props;
+
+/**
+ * Duas fotografias entram na grade como blocos 2x2. Com doze cartões de ícone,
+ * os 20 espaços fecham cinco linhas exatas em quatro colunas.
+ */
+const tiles = [
+  {
+    after: 'Restaurante com pratos típicos',
+    image: 'costela',
+    label: 'A costela de fogo de chão',
+    alt: 'Costela assando no fogo de chão do restaurante do Rancho Texas Ubatuba',
+  },
+  {
+    after: 'Pesqueiro',
+    image: 'cafe-da-manha',
+    label: 'A mesa do café da manhã',
+    alt: 'Mesa de café da manhã com frutas, pães e bolos no Rancho Texas Ubatuba',
+  },
+];
+---
+
+<section class="amenities-section section" id="estrutura">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">{eyebrow}</span><h2 set:html={heading} />
+      </div><p>{text}</p>
+    </div><ul class="amenity-grid">
+      {
+        amenities.map((a) => {
+          const tile = tiles.find((t) => t.after === a.title);
+          return (
+            <>
+              <li class="amenity-card">
+                <>
+                  <span class="amenity-icon">
+                    <Icon name={a.icon} size={24} />
+                  </span>
+                  <h3>{a.title}</h3>
+                  <p>{a.text}</p>
+                </>
+              </li>
+              {tile && (
+                <li class="amenity-tile">
+                  <>
+                    <Photo
+                      name={tile.image}
+                      alt={tile.alt}
+                      sizes="(max-width: 700px) 100vw, 40vw"
+                    />
+                    <span>{tile.label}</span>
+                  </>
+                </li>
+              )}
+            </>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,454 @@
+---
+import '@fontsource-variable/dm-sans/wght.css';
+import '@fontsource-variable/cormorant-garamond';
+import '@fontsource-variable/cormorant-garamond/wght-italic.css';
+import headingFont from '@fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { site, nav, phones, amenities, faqs, rooms } from '../data/site';
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  /** Publica o bloco FAQPage. Use apenas nas páginas que realmente exibem as perguntas. */
+  faq?: boolean;
+  /** Trilha de navegação exibida na página, reaproveitada como BreadcrumbList. */
+  breadcrumb?: { label: string; href: string }[];
+  /** Caminho completo da imagem de compartilhamento, quando ela não vem de `image`. */
+  ogImage?: string;
+}
+const {
+  title,
+  description,
+  image = 'rancho-lago',
+  noindex = false,
+  faq = false,
+  breadcrumb = [],
+  ogImage,
+} = Astro.props;
+const shareImage = ogImage ?? `/images/${image}-1200.webp`;
+const preventIndexing = noindex || import.meta.env.PUBLIC_NOINDEX === 'true';
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const hotel = {
+  '@type': 'Hotel',
+  '@id': `${site.url}/#hotel`,
+  name: site.name,
+  alternateName: 'Pousada Rancho Texas',
+  url: site.url,
+  description: site.description,
+  telephone: phones.map((p) => p.tel),
+  email: site.email,
+  image: [
+    `${site.url}/images/rancho-lago-1920.webp`,
+    `${site.url}/images/piscina-1200.webp`,
+    `${site.url}/images/fazendinha-1200.webp`,
+  ],
+  logo: `${site.url}/images/logo.png`,
+  priceRange: '$$',
+  currenciesAccepted: 'BRL',
+  checkinTime: site.checkIn,
+  checkoutTime: site.checkOut,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: `${site.street}, ${site.district}`,
+    addressLocality: site.city,
+    addressRegion: site.state,
+    postalCode: site.postalCode,
+    addressCountry: 'BR',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: site.geo.lat,
+    longitude: site.geo.lng,
+  },
+  amenityFeature: amenities.map((a) => ({
+    '@type': 'LocationFeatureSpecification',
+    name: a.title,
+    value: true,
+  })),
+  makesOffer: rooms.map((room) => ({
+    '@type': 'Offer',
+    name: room.name,
+    url: `${site.url}/acomodacoes/${room.slug}`,
+    itemOffered: {
+      '@type': 'HotelRoom',
+      name: room.name,
+      description: room.text,
+      ...(room.size
+        ? {
+            floorSize: {
+              '@type': 'QuantitativeValue',
+              value: parseInt(room.size, 10),
+              unitCode: 'MTK',
+            },
+          }
+        : {}),
+    },
+  })),
+  sameAs: Object.values(site.social),
+  hasMap: site.maps,
+  potentialAction: {
+    '@type': 'ReserveAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: site.booking,
+      actionPlatform: [
+        'https://schema.org/DesktopWebPlatform',
+        'https://schema.org/MobileWebPlatform',
+      ],
+    },
+    result: { '@type': 'LodgingReservation', name: 'Reserva no Rancho Texas' },
+  },
+};
+const graph: Record<string, unknown>[] = [
+  hotel,
+  {
+    '@type': 'WebSite',
+    '@id': `${site.url}/#website`,
+    url: site.url,
+    name: site.name,
+    inLanguage: 'pt-BR',
+    publisher: { '@id': `${site.url}/#hotel` },
+  },
+];
+if (faq)
+  graph.push({
+    '@type': 'FAQPage',
+    '@id': `${canonical}#faq`,
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  });
+if (breadcrumb.length)
+  graph.push({
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumb`,
+    itemListElement: [{ label: 'Início', href: '/' }, ...breadcrumb].map(
+      (item, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: item.label,
+        item: new URL(item.href, site.url).href,
+      }),
+    ),
+  });
+const schema = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" /><meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>{title}</title><meta name="description" content={description} /><link
+      rel="canonical"
+      href={canonical}
+    />
+    <meta name="theme-color" content="#4a342d" /><meta
+      name="robots"
+      content={preventIndexing
+        ? 'noindex,follow'
+        : 'index,follow,max-image-preview:large'}
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/images/favicon.png"
+      sizes="96x96"
+    />
+    <link rel="apple-touch-icon" href="/images/favicon.png" />
+    <link
+      rel="preload"
+      href={headingFont}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    {
+      Astro.url.pathname === '/' && (
+        <>
+          <>
+            <link
+              rel="preload"
+              as="image"
+              href="/images/hero-mobile-480.webp"
+              imagesrcset="/images/hero-mobile-480.webp 480w, /images/hero-mobile-800.webp 800w"
+              imagesizes="100vw"
+              media="(max-width: 600px)"
+              fetchpriority="high"
+            />
+            <link
+              rel="preload"
+              as="image"
+              href="/images/rancho-lago-1200.webp"
+              imagesrcset="/images/rancho-lago-640.webp 640w, /images/rancho-lago-800.webp 800w, /images/rancho-lago-1200.webp 1200w, /images/rancho-lago-1920.webp 1920w"
+              imagesizes="100vw"
+              media="(min-width: 601px)"
+              fetchpriority="high"
+            />
+          </>
+        </>
+      )
+    }
+    <meta property="og:type" content="website" /><meta
+      property="og:locale"
+      content="pt_BR"
+    /><meta property="og:site_name" content={site.name} /><meta
+      property="og:title"
+      content={title}
+    /><meta property="og:description" content={description} /><meta
+      property="og:url"
+      content={canonical}
+    /><meta
+      property="og:image"
+      content={new URL(shareImage, site.url).href}
+    /><meta
+      property="og:image:alt"
+      content="Rancho Texas Ubatuba — hospedagem em meio à natureza"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(schema).replace(/</g, '\u003c')}
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="topbar">
+      <div class="container">
+        <span
+          ><Icon name="pin" size={13} /> Um encontro com a natureza em Ubatuba, SP</span
+        ><a href={site.whatsapp} target="_blank" rel="noopener noreferrer"
+          >Vamos planejar sua estadia? <span>{site.phone}</span>
+          <Icon name="arrow" size={14} /></a
+        >
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a
+          class="brand"
+          href="/"
+          aria-label="Rancho Texas Ubatuba, página inicial"
+          ><img
+            src="/images/logo.webp"
+            width="110"
+            height="110"
+            alt="Rancho Texas Ubatuba"
+          /><span>POUSADA & NATUREZA</span></a
+        >
+        <nav id="main-nav" aria-label="Navegação principal">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={
+                  Astro.url.pathname === item.href ? 'page' : undefined
+                }
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <a href="/#reservar" class="button header-book"
+          >Reserve sua estadia <Icon name="arrow" size={18} /></a
+        >
+        <button
+          class="menu-toggle"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+          aria-controls="main-nav"><Icon name="menu" /></button
+        >
+      </div>
+    </header>
+    <main id="conteudo">
+      {
+        breadcrumb.length > 0 && (
+          <nav class="breadcrumb" aria-label="Você está em">
+            <div class="container">
+              <>
+                <a href="/">Início</a>
+                {breadcrumb.map((item, i) => (
+                  <>
+                    <span aria-hidden="true">/</span>
+                    {i === breadcrumb.length - 1 ? (
+                      <span aria-current="page">{item.label}</span>
+                    ) : (
+                      <a href={item.href}>{item.label}</a>
+                    )}
+                  </>
+                ))}
+              </>
+            </div>
+          </nav>
+        )
+      }<slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <a href="/"
+            ><img
+              src="/images/logo.webp"
+              width="140"
+              height="140"
+              alt="Rancho Texas Ubatuba"
+            /></a
+          ><p>
+            Um pouco de campo.<br />Um tanto de natureza.<br />Muito para viver
+            juntos.
+          </p>
+        </div>
+        <div>
+          <span class="footer-title">Explore o Rancho</span><a
+            href="/acomodacoes">Acomodações</a
+          ><a href="/fazendinha">Fazendinha</a><a href="/natureza"
+            >Natureza e lazer</a
+          ><a href="/camping">Camping</a><a href="/casamentos">Casamentos</a>
+        </div>
+        <div>
+          <span class="footer-title">Planeje sua viagem</span><a href="/galeria"
+            >Galeria de fotos</a
+          ><a href="/blog">Diário do Rancho</a><a href="/avaliacoes"
+            >Avaliações</a
+          ><a href="/contato">Como chegar</a><a href="/#duvidas"
+            >Perguntas frequentes</a
+          ><a href={site.booking} rel="noopener noreferrer" target="_blank"
+            >Reservar online ↗</a
+          >
+        </div>
+        <div class="footer-contact">
+          <span class="footer-title">Estamos por aqui</span>
+          <ul class="footer-contacts">
+            {
+              phones.map((p) => (
+                <li>
+                  <a
+                    href={p.href}
+                    {...(p.kind === 'WhatsApp'
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                  >
+                    <Icon
+                      name={p.kind === 'WhatsApp' ? 'whatsapp' : 'phone'}
+                      size={15}
+                    />
+                    <span>
+                      {p.label}
+                      <small>{p.kind}</small>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+            <li>
+              <a href={`mailto:${site.email}`}
+                ><Icon name="mail" size={15} /><span>{site.email}</span></a
+              >
+            </li>
+          </ul>
+          <p class="footer-address">
+            <Icon name="pin" size={15} /><span
+              >{site.street}<br />{site.district} · {site.city} – {
+                site.state
+              }<br />CEP {site.postalCode}</span
+            >
+          </p>
+          <ul class="footer-social">
+            <li>
+              <a
+                href={site.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram do Rancho Texas Ubatuba"
+                ><Icon name="instagram" size={19} /></a
+              >
+            </li><li>
+              <a
+                href={site.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook do Rancho Texas Ubatuba"
+                ><Icon name="facebook" size={19} /></a
+              >
+            </li><li>
+              <a
+                href={site.social.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube do Rancho Texas Ubatuba"
+                ><Icon name="youtube" size={19} /></a
+              >
+            </li><li>
+              <a
+                href={site.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp do Rancho Texas Ubatuba"
+                ><Icon name="whatsapp" size={19} /></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div><div class="container footer-bottom">
+        <span>© {new Date().getFullYear()} Rancho Texas Ubatuba</span><span
+          >Feito para bons momentos.</span
+        ><a href="/privacidade">Privacidade</a>
+      </div>
+    </footer>
+    <a
+      class="whatsapp-float"
+      href={site.whatsapp}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Falar com o Rancho Texas pelo WhatsApp"
+      ><Icon name="whatsapp" size={24} /><span>Fale com a gente</span></a
+    >
+    <script>
+      // O botão flutuante sai de cena enquanto a busca de disponibilidade está
+      // visível, para não cobrir o CTA principal em telas pequenas.
+      const float = document.querySelector<HTMLElement>('.whatsapp-float');
+      const booking = document.querySelector<HTMLElement>('.booking-wrap');
+      if (float && booking && 'IntersectionObserver' in window) {
+        new IntersectionObserver(
+          ([entry]) =>
+            float.classList.toggle('is-hidden', entry.isIntersecting),
+          { rootMargin: '-40px 0px -40px 0px' },
+        ).observe(booking);
+      }
+
+      const menu = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
+      const nav = document.querySelector<HTMLElement>('#main-nav')!;
+      function closeMenu() {
+        menu.setAttribute('aria-expanded', 'false');
+        menu.setAttribute('aria-label', 'Abrir menu');
+        nav.classList.remove('is-open');
+      }
+      menu.addEventListener('click', () => {
+        const open = menu.getAttribute('aria-expanded') !== 'true';
+        menu.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+        nav.classList.toggle('is-open', open);
+      });
+      nav
+        .querySelectorAll('a')
+        .forEach((a) => a.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (e) => {
+        if (
+          e.key === 'Escape' &&
+          menu.getAttribute('aria-expanded') === 'true'
+        ) {
+          closeMenu();
+          menu.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Photo from '../../components/Photo.astro';
+import Icon from '../../components/Icon.astro';
+import { articles } from '../../data/articles';
+---
+
+<Layout
+  title="Diário do Rancho: natureza e viagens em Ubatuba | Rancho Texas"
+  description="Observação de aves, Cachoeira do Pé da Serra, viagens em família e dicas de camping em Ubatuba. Inspire sua próxima estadia no Diário do Rancho."
+  breadcrumb={[{ label: 'Diário do Rancho', href: '/blog' }]}
+  ><PageHero
+    title="Histórias para inspirar a próxima viagem."
+    label="Diário do Rancho"
+    image="rio"
+    imageAlt="Águas claras do rio que corre pelo Rancho Texas, entre pedras e vegetação de Mata Atlântica"
+  /><section class="section container">
+    <span class="eyebrow">DIÁRIO DO RANCHO</span><h2 style="margin-top:15px">
+      Um pouco mais de <em>vida lá fora.</em>
+    </h2><div class="secondary-grid">
+      {
+        articles.map((a) => (
+          <article class="secondary-card">
+            <>
+              <a href={`/blog/${a.slug}`}>
+                <>
+                  <Photo
+                    name={a.image}
+                    alt={a.title}
+                    sizes="(max-width: 600px) 100vw, 33vw"
+                  />
+                  <span class="eyebrow" style="margin-top:20px">
+                    {a.category}
+                  </span>
+                  <h3>{a.title}</h3>
+                </>
+              </a>
+              <p>{a.description}</p>
+              <time class="article-date" datetime={a.date}>
+                {new Date(a.date + 'T12:00:00').toLocaleDateString('pt-BR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </time>
+              <a class="text-link" href={`/blog/${a.slug}`}>
+                Ler a história <Icon name="arrow" size={18} />
+              </a>
+            </>
+          </article>
+        ))
+      }
+    </div>
+  </section></Layout
+>

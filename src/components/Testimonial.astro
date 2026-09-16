@@ -1,0 +1,95 @@
+---
+import Icon from './Icon.astro';
+import { testimonials, site } from '../data/site';
+
+interface Props {
+  /** Quantas avaliações exibir. A página inicial mostra menos que a página de avaliações. */
+  limit?: number;
+}
+const { limit = testimonials.length } = Astro.props;
+const list = testimonials.slice(0, limit);
+const allFive = testimonials.every((t) => t.rating === 5);
+---
+
+<section class="reviews-section section" id="avaliacoes">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">O QUE ESTÃO FALANDO DO RANCHO</span><h2>
+          Quem passou por aqui<br /><em>conta melhor.</em>
+        </h2>
+      </div><div class="reviews-summary">
+        <div
+          class="reviews-stars"
+          role="img"
+          aria-label="Cinco de cinco estrelas"
+        >
+          {
+            Array.from({ length: 5 }).map(() => (
+              <Icon name="star" size={18} filled />
+            ))
+          }
+        </div><p>
+          {testimonials.length} avaliações de hóspedes{
+            allFive ? ', todas com cinco estrelas' : ''
+          }. São comentários publicados no Google e nas redes do Rancho,
+          transcritos na íntegra.
+        </p>
+      </div>
+    </div><ul class="reviews-grid">
+      {
+        list.map((t) => (
+          <li class="review-card">
+            <>
+              <div
+                class="reviews-stars"
+                role="img"
+                aria-label={`${t.rating} de 5 estrelas`}
+              >
+                {Array.from({ length: t.rating }).map(() => (
+                  <Icon name="star" size={15} filled />
+                ))}
+              </div>
+              <blockquote>{t.text}</blockquote>
+              {t.highlights.length > 0 && (
+                <ul class="review-tags">
+                  {t.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+              <footer>
+                <>
+                  <strong>{t.name}</strong>
+                  <span>{t.context}</span>
+                  {t.scores && <span class="review-scores">{t.scores}</span>}
+                </>
+              </footer>
+            </>
+          </li>
+        ))
+      }
+    </ul><div class="reviews-actions">
+      {
+        list.length < testimonials.length && (
+          <a class="text-link" href="/avaliacoes">
+            Ver as {testimonials.length} avaliações{' '}
+            <Icon name="arrow" size={18} />
+          </a>
+        )
+      }<a
+        class="button"
+        href={site.review}
+        target="_blank"
+        rel="noopener noreferrer"
+        >Deixe sua avaliação <Icon name="arrow" size={18} /></a
+      ><a
+        class="text-link"
+        href={site.maps}
+        target="_blank"
+        rel="noopener noreferrer"
+        >Ver o Rancho no Google <Icon name="arrow" size={18} /></a
+      >
+    </div>
+  </div>
+</section>

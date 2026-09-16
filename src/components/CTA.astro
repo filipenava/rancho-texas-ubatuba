@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+
+interface Props {
+  /** Fotografia de fundo. Use outra quando a página já mostrar esta imagem. */
+  image?: string;
+}
+const { image = 'jardim' } = Astro.props;
+---
+
+<section class="cta-section">
+  <Photo name={image} alt="" class="cta-image" sizes="100vw" /><div
+    class="cta-shade"
+  >
+  </div>
+  <div class="container">
+    <span class="eyebrow">A NATUREZA ESTÁ CHAMANDO</span><h2>
+      Os melhores dias<br />a gente vive <em>junto.</em>
+    </h2><a class="button button-light" href="/#reservar"
+      >Encontre sua próxima estadia <Icon name="arrow" size={20} /></a
+    ><p>Rancho Texas · Ubatuba · Litoral Norte de São Paulo</p>
+  </div>
+</section>

@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Icon from '../../components/Icon.astro';
+import CTA from '../../components/CTA.astro';
+import { albums, albumSrc, albumSrcset } from '../../data/albums';
+
+export function getStaticPaths() {
+  return albums.map((album, i) => ({
+    params: { album: album.slug },
+    props: { album, next: albums[(i + 1) % albums.length] },
+  }));
+}
+const { album, next } = Astro.props;
+---
+
+<Layout
+  title={`${album.title}: fotos da pousada | Rancho Texas Ubatuba`}
+  description={album.description}
+  ogImage={albumSrc(album.cover, 1600)}
+  breadcrumb={[
+    { label: 'Galeria', href: '/galeria' },
+    { label: album.title, href: `/galeria/${album.slug}` },
+  ]}
+>
+  <PageHero
+    title={album.heading}
+    label={`Galeria · ${album.title}`}
+    description={`${album.photos.length} fotografias do acervo da pousada`}
+    image="jardim"
+    imageAlt="Jardim do Rancho Texas Ubatuba com gramado, palmeiras e o lago ao fundo"
+  />
+  <section class="section container">
+    <div class="album-intro">
+      {album.intro.map((t) => <p>{t}</p>)}
+    </div><div class="album-grid">
+      {
+        album.photos.map((p, i) => (
+          <button
+            class="gallery-item"
+            data-photo={albumSrc(p.id, 1600)}
+            data-caption={`${album.title} · ${i + 1} de ${album.photos.length}`}
+            aria-label={`Ampliar foto ${i + 1} de ${album.photos.length}`}
+          >
+            <img
+              src={albumSrc(p.id, 560)}
+              srcset={albumSrcset(p.id)}
+              sizes="(max-width: 600px) 45vw, (max-width: 1000px) 30vw, 250px"
+              alt={`${album.alt} (${i + 1} de ${album.photos.length})`}
+              width={p.width}
+              height={p.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        ))
+      }
+    </div><div class="album-footer">
+      <a class="text-link" href="/galeria"
+        >Todos os álbuns <Icon name="arrow" size={18} /></a
+      ><a class="text-link" href={`/galeria/${next.slug}`}
+        >Ver {next.title} <Icon name="arrow" size={18} /></a
+      >
+    </div>
+  </section><CTA /><Lightbox />
+</Layout>

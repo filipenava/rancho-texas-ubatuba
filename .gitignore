@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+.env
+
+# Artefatos de pesquisa: pesados e reprodutíveis pelos scripts em scripts/.
+# Os JSON de manifesto ficam versionados porque o build depende deles.
+research/originals/
+research/audit-tools/
+research/contact-sheets/
+research/*.html
+research/*.txt
+research/*.png
+research/*.jpg
+research/videos/*
+!research/videos/sources.json
+research/lighthouse.json
+research/lh.json
+research/seo-audit.json
+research/visual-review.json

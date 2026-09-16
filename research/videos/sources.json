@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://vid.cdn-website.com/73fc2651/videos/V90bufVhTAWxa9Uj8nua_Video+Project+6-v.mp4",
+    "poster": "https://irp.cdn-website.com/73fc2651/dms3rep/multi/opt/V90bufVhTAWxa9Uj8nua_Video+Project+6.v2.0000000-1920w.jpg",
+    "uploadDate": null,
+    "file": "636c7d79d67b.mp4",
+    "bytes": 6260629,
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(progressive)",
+      "audio_codec": "aac",
+      "fps": 30.0,
+      "source_size": [
+        1920,
+        1080
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "rotate": 0,
+      "duration": 9.33
+    }
+  },
+  {
+    "url": "https://vid.cdn-website.com/73fc2651/videos/X07PKiswS1ixOfjTsr77_Design+sem+nome+%281%29-v.mp4",
+    "poster": "https://irp.cdn-website.com/73fc2651/dms3rep/multi/X07PKiswS1ixOfjTsr77_Design+sem+nome+%281%29.v2.0000000.jpg",
+    "uploadDate": "2026-05-01T12:19:46.342000+00:00",
+    "file": "81e89004dde7.mp4",
+    "bytes": 7522751,
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, bt709, progressive)",
+      "audio_codec": "aac",
+      "fps": 60.0,
+      "source_size": [
+        1920,
+        1358
+      ],
+      "size": [
+        1920,
+        1358
+      ],
+      "rotate": 0,
+      "duration": 10.68
+    }
+  },
+  {
+    "url": "https://vid.cdn-website.com/73fc2651/videos/eIaTcwhaRZS2onQbY0h9_VIDEO+PRINCIPAL+DA+POUSADA+%28V%C3%ADdeos+curtos+para+YouTube%29-v.mp4",
+    "poster": "https://irp.cdn-website.com/73fc2651/dms3rep/multi/eIaTcwhaRZS2onQbY0h9_VIDEO+PRINCIPAL+DA+POUSADA+%28V%C3%ADdeos+curtos+para+YouTube%29.v2.0000000.jpg",
+    "uploadDate": "2026-08-15T17:55:37.504000+00:00",
+    "file": "cd7e09c67a76.mp4",
+    "bytes": 23089900,
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, bt709, progressive)",
+      "audio_codec": "aac",
+      "fps": 30.0,
+      "source_size": [
+        1920,
+        1080
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "rotate": 0,
+      "duration": 112.27000000000001
+    }
+  }
+]

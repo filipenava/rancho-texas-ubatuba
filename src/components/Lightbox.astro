@@ -1,0 +1,77 @@
+---
+/**
+ * Amplia qualquer `.gallery-item` da página. O botão carrega a foto grande em
+ * `data-photo` e a legenda em `data-caption`; os filtros, quando existem,
+ * apenas escondem itens e a navegação respeita o que está visível.
+ */
+---
+
+<dialog class="lightbox" aria-label="Foto ampliada">
+  <div class="lightbox-controls">
+    <button type="button" data-prev aria-label="Foto anterior">←</button><span
+      data-caption></span><button
+      type="button"
+      data-next
+      aria-label="Próxima foto">→</button
+    ><button type="button" data-close aria-label="Fechar foto">✕</button>
+  </div><!-- sem src até a primeira abertura: src="" dispara requisição em alguns navegadores -->
+  <img alt="" />
+</dialog>
+<script>
+  const buttons = [
+    ...document.querySelectorAll<HTMLButtonElement>('.gallery-item'),
+  ];
+  const dialog = document.querySelector<HTMLDialogElement>('.lightbox')!;
+  let active = 0;
+  let opener: HTMLButtonElement | null = null;
+  const visible = () => buttons.filter((b) => !b.hidden);
+  function show(index: number) {
+    const list = visible();
+    active = (index + list.length) % list.length;
+    const b = list[active];
+    const img = dialog.querySelector('img')!;
+    img.src = b.dataset.photo!;
+    img.alt = b.dataset.caption!;
+    dialog.querySelector('[data-caption]')!.textContent =
+      `${active + 1} / ${list.length} · ${b.dataset.caption}`;
+  }
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      opener = b;
+      show(visible().indexOf(b));
+      dialog.showModal();
+    }),
+  );
+  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((b) =>
+    b.addEventListener('click', () => {
+      document
+        .querySelectorAll('[data-filter]')
+        .forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      buttons.forEach(
+        (x) =>
+          (x.hidden =
+            b.dataset.filter !== 'Todas' &&
+            x.dataset.category !== b.dataset.filter),
+      );
+      document.querySelector('[data-gallery-status]')!.textContent =
+        `${visible().length} fotos exibidas`;
+    }),
+  );
+  dialog
+    .querySelector('[data-close]')!
+    .addEventListener('click', () => dialog.close());
+  dialog
+    .querySelector('[data-prev]')!
+    .addEventListener('click', () => show(active - 1));
+  dialog
+    .querySelector('[data-next]')!
+    .addEventListener('click', () => show(active + 1));
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') show(active + 1);
+    if (e.key === 'ArrowLeft') show(active - 1);
+  });
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', () => opener?.focus());
+</script>

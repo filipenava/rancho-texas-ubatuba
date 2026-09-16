@@ -1,0 +1,25 @@
+---
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import { rooms } from '../data/site';
+const { room } = Astro.props as { room: (typeof rooms)[number] };
+---
+
+<article class="room-card">
+  <a href={`/acomodacoes/${room.slug}`} class="room-photo"
+    ><Photo
+      name={room.image}
+      alt={`Interior da ${room.name} do Rancho Texas Ubatuba`}
+      sizes="(max-width: 600px) 100vw, 33vw"
+    />{room.size && <span>{room.size}</span>}</a
+  ><div class="room-info">
+    <span class="eyebrow">{room.tag}</span><h3>
+      <a href={`/acomodacoes/${room.slug}`}>{room.name}</a>
+    </h3><p>{room.text}</p><div class="room-meta">
+      <span>Ar-condicionado · Wi-Fi · TV</span><a
+        href={`/acomodacoes/${room.slug}`}
+        aria-label={`Conhecer ${room.name}`}><Icon name="arrow" /></a
+      >
+    </div>
+  </div>
+</article>

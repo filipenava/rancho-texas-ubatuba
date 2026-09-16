@@ -1,0 +1,41 @@
+---
+import Photo from './Photo.astro';
+import { animals } from '../data/site';
+---
+
+<section class="animals-section section">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">QUEM MORA AQUI</span><h2>
+          Eles fazem questão<br />de se <em>apresentar.</em>
+        </h2>
+      </div><p>
+        Cada um com seu jeito. Chegue devagar, converse baixinho e siga as
+        orientações da equipe para alimentá-los.
+      </p>
+    </div><ul class="animal-grid">
+      {
+        animals.map((a) => (
+          <li class="animal-card">
+            <>
+              <Photo
+                name={a.image}
+                alt={`${a.kind} ${a.name}, da fazendinha do Rancho Texas Ubatuba`}
+                sizes="(max-width: 600px) 100vw, 25vw"
+                style={`object-position:${a.position}`}
+              />
+              <div class="animal-copy">
+                <>
+                  <span class="animal-kind">{a.kind}</span>
+                  <h3>{a.name}</h3>
+                  <p>“{a.quote}”</p>
+                </>
+              </div>
+            </>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

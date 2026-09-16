@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+import { articles } from '../../data/articles';
+import { site } from '../../data/site';
+export function getStaticPaths() {
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+const { article } = Astro.props;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: article.title,
+  description: article.description,
+  image: `${site.url}/images/${article.image}-1200.webp`,
+  inLanguage: 'pt-BR',
+  datePublished: article.date,
+  dateModified: article.date,
+  author: { '@type': 'Organization', name: site.name, url: site.url },
+  publisher: {
+    '@type': 'Organization',
+    name: site.name,
+    logo: { '@type': 'ImageObject', url: `${site.url}/images/logo.png` },
+  },
+  articleSection: article.category,
+  mainEntityOfPage: `${site.url}/blog/${article.slug}`,
+};
+---
+
+<Layout
+  title={`${'seoTitle' in article && article.seoTitle ? article.seoTitle : article.title} | Rancho Texas`}
+  description={article.description}
+  image={article.image}
+  breadcrumb={[
+    { label: 'Diário do Rancho', href: '/blog' },
+    { label: article.title, href: `/blog/${article.slug}` },
+  ]}
+  ><article class="prose container">
+    <a href="/blog" style="font-size:12px">← Diário do Rancho</a><span
+      class="eyebrow"
+      style="margin-top:30px">{article.category}</span
+    ><h1 style="margin-top:15px">{article.title}</h1><p class="article-byline">
+      <span>Equipe do Rancho Texas</span> · <time datetime={article.date}>
+        {
+          new Date(article.date + 'T12:00:00').toLocaleDateString('pt-BR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })
+        }
+      </time>
+    </p><p>{article.description}</p><Photo
+      name={article.image}
+      alt={article.title}
+      eager
+      class="article-hero"
+    />{
+      article.sections.map((s) => (
+        <section>
+          <>
+            <h2>{s.title}</h2>
+            <p>{s.text}</p>
+            {'list' in s && s.list && (
+              <ul class="prose-list">
+                {s.list.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+          </>
+        </section>
+      ))
+    }<div class="info-box">
+      Pronto para viver dias mais leves? <a href="/#reservar"
+        >Consulte as datas da sua próxima estadia no Rancho Texas.</a
+      >
+    </div>
+  </article><script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(schema).replace(/</g, '\u003c')}
+  /></Layout
+>

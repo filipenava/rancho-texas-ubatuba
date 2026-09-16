@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+import { albums, albumSrc, albumSrcset } from '../data/albums';
+
+interface Props {
+  slug: string;
+  /** Quantas miniaturas exibir antes do link para o álbum completo. */
+  count?: number;
+}
+const { slug, count = 5 } = Astro.props;
+const album = albums.find((a) => a.slug === slug);
+/** Espalha a amostra pelo álbum inteiro em vez de pegar só as primeiras. */
+const step = album ? Math.max(1, Math.floor(album.photos.length / count)) : 1;
+const sample = album
+  ? album.photos.filter((_, i) => i % step === 0).slice(0, count)
+  : [];
+---
+
+{
+  album && (
+    <section class="teaser-section section container">
+      <>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">ÁLBUM COMPLETO</span>
+            <h2>
+              Mais {album.title.toLowerCase()},<br />
+              <em>sem pressa.</em>
+            </h2>
+          </div>
+          <p>
+            {album.photos.length} fotografias reais deste canto do Rancho, todas
+            do acervo da pousada.
+          </p>
+        </div>
+        <div class="teaser-grid">
+          {sample.map((p, i) => (
+            <img
+              src={albumSrc(p.id, 560)}
+              srcset={albumSrcset(p.id)}
+              sizes="(max-width: 600px) 45vw, (max-width: 1000px) 30vw, 200px"
+              alt={`${album.alt} (${i + 1})`}
+              width={p.width}
+              height={p.height}
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+          <a class="teaser-more" href={`/galeria/${album.slug}`}>
+            <>
+              <span>Ver as {album.photos.length}</span>
+              <Icon name="arrow" size={20} />
+            </>
+          </a>
+        </div>
+      </>
+    </section>
+  )
+}

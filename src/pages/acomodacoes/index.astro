@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import RoomCard from '../../components/RoomCard.astro';
+import CTA from '../../components/CTA.astro';
+import Amenities from '../../components/Amenities.astro';
+import AlbumTeaser from '../../components/AlbumTeaser.astro';
+import { rooms, site } from '../../data/site';
+---
+
+<Layout
+  title="Acomodações em Ubatuba: suítes para sua estadia | Rancho Texas"
+  description="Suítes de 18 a 80 m² no Rancho Texas Ubatuba: Duplex, Eco Bloco, Standard, da Roça e Casa Rosa. Todas com ar-condicionado, TV, Wi-Fi e café da manhã incluso."
+  breadcrumb={[{ label: 'Acomodações', href: '/acomodacoes' }]}
+>
+  <PageHero
+    title="Seu cantinho no Rancho."
+    label="Acomodações"
+    description="Depois de um dia de descobertas, o aconchego de se sentir em casa."
+    image="suite-duplex"
+    imageAlt="Interior da Suíte Duplex do Rancho Texas Ubatuba, com cama de casal e janela para o verde"
+  />
+  <section class="section container">
+    <div class="page-intro">
+      <span class="eyebrow">ACOMODAÇÕES EM UBATUBA</span><h2>
+        Para cada viagem,<br />um jeito de <em>descansar.</em>
+      </h2><p>
+        Cinco categorias, de 18 a 80 m², cercadas pelo clima tranquilo do
+        Rancho. Todas com ar-condicionado, TV, Wi-Fi e café da manhã incluso.
+        Conheça os detalhes e encontre a opção para a sua estadia.
+      </p>
+    </div><div class="room-grid">
+      {rooms.map((room) => <RoomCard room={room} />)}
+    </div><div class="info-box">
+      A capacidade, as refeições e as condições variam conforme a categoria e a
+      tarifa. Confira todos os detalhes antes de concluir sua reserva. Para
+      grupos ou mais de uma acomodação, <a
+        class="text-link"
+        href={site.whatsapp}>fale com nossa equipe</a
+      >.
+    </div>
+  </section><AlbumTeaser slug="acomodacoes" /><Amenities
+    eyebrow="INCLUÍDO NA SUA ESTADIA"
+    heading="Além do<br />seu <em>quarto.</em>"
+    text="A hospedagem no Rancho vai além da suíte: café da manhã, restaurante, piscina, pesqueiro e a fazendinha fazem parte dos seus dias por aqui."
+  /><CTA />
+</Layout>

@@ -1,0 +1,210 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+
+<section
+  class="booking-wrap container"
+  id="reservar"
+  aria-label="Consultar disponibilidade"
+>
+  <form class="booking" action={site.booking} method="get">
+    <div class="booking-intro">
+      <span class="eyebrow">SEU PRÓXIMO RESPIRO</span><strong
+        >Começa aqui.</strong
+      >
+    </div>
+    <label class="booking-field"
+      ><span><Icon name="calendar" size={16} /> Chegada</span><input
+        type="date"
+        name="checkIn"
+        required
+        aria-label="Data de chegada"
+      /></label
+    >
+    <label class="booking-field"
+      ><span><Icon name="calendar" size={16} /> Saída</span><input
+        type="date"
+        name="checkOut"
+        required
+        aria-label="Data de saída"
+      /></label
+    >
+    <div class="guest-picker booking-field">
+      <span><Icon name="people" size={16} /> Hóspedes</span>
+      <button
+        class="guest-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="guest-panel"
+        ><span data-guest-summary>2 adultos</span><span aria-hidden="true"
+          >⌄</span
+        ></button
+      >
+      <div class="guest-panel" id="guest-panel" hidden>
+        <label
+          >Adultos <select name="adults" aria-label="Adultos"
+            >{
+              [1, 2, 3, 4, 5, 6].map((n) => (
+                <option value={n} selected={n === 2}>
+                  {n}
+                </option>
+              ))
+            }</select
+          ></label
+        >
+        <label
+          >Crianças <select name="children" aria-label="Crianças"
+            >{
+              [0, 1, 2, 3, 4].map((n) => <option value={n}>{n}</option>)
+            }</select
+          ></label
+        >
+        <div data-child-ages></div>
+        <small
+          >Informe a idade na data da viagem.<br />Busca para 1 acomodação.</small
+        >
+        <button class="button button-small" type="button" data-close-guests
+          >Confirmar hóspedes</button
+        >
+      </div>
+    </div>
+    <button class="button booking-submit" type="submit"
+      >Ver disponibilidade <Icon name="arrow" size={20} /></button
+    >
+    <div class="booking-bottom">
+      <span><Icon name="check" size={14} /> Reserva direta com a pousada</span
+      ><details>
+        <summary>Tenho um cupom</summary><label
+          >Código promocional <input
+            name="code"
+            maxlength="60"
+            placeholder="Digite seu código"
+          /></label
+        >
+      </details><span>Reserva segura via Omnibees</span>
+    </div>
+    <p class="form-error" aria-live="polite" hidden></p>
+    <noscript
+      ><style is:inline>
+        .booking > :not(noscript) {
+          display: none !important;
+        }
+        .booking {
+          display: block;
+          padding: 24px;
+        }
+      </style><p>
+        Para consultar as datas, <a class="text-link" href={site.booking}
+          >acesse nosso motor de reservas</a
+        >.
+      </p></noscript
+    >
+  </form>
+</section>
+<script>
+  import { localISO, addDays, buildBookingURL } from '../lib/booking.mjs';
+  const form = document.querySelector<HTMLFormElement>('.booking');
+  if (form) {
+    const arrival = form.elements.namedItem('checkIn') as HTMLInputElement;
+    const departure = form.elements.namedItem('checkOut') as HTMLInputElement;
+    const adults = form.elements.namedItem('adults') as HTMLSelectElement;
+    const children = form.elements.namedItem('children') as HTMLSelectElement;
+    const toggle = form.querySelector<HTMLButtonElement>('.guest-toggle')!;
+    const panel = form.querySelector<HTMLElement>('.guest-panel')!;
+    const ageFields = form.querySelector<HTMLElement>('[data-child-ages]')!;
+    const error = form.querySelector<HTMLElement>('.form-error')!;
+    arrival.min = localISO();
+    arrival.value = localISO();
+    departure.value = addDays(arrival.value, 2);
+    departure.min = addDays(arrival.value, 1);
+    arrival.addEventListener('change', () => {
+      if (!arrival.value) return;
+      departure.min = addDays(arrival.value, 1);
+      if (departure.value <= arrival.value)
+        departure.value = addDays(arrival.value, 1);
+    });
+    function closeGuests() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    toggle.addEventListener('click', () => {
+      panel.hidden = !panel.hidden;
+      toggle.setAttribute('aria-expanded', String(!panel.hidden));
+    });
+    form
+      .querySelector('[data-close-guests]')!
+      .addEventListener('click', closeGuests);
+    document.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('.guest-picker')) closeGuests();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        closeGuests();
+        toggle.focus();
+      }
+    });
+    function summary() {
+      form!.querySelector('[data-guest-summary]')!.textContent =
+        `${adults.value} adulto${adults.value === '1' ? '' : 's'}${Number(children.value) ? `, ${children.value} criança${children.value === '1' ? '' : 's'}` : ''}`;
+    }
+    adults.addEventListener('change', summary);
+    children.addEventListener('change', () => {
+      const existing = [...ageFields.querySelectorAll('select')].map(
+        (s) => s.value,
+      );
+      ageFields.replaceChildren();
+      for (let i = 0; i < Number(children.value); i++) {
+        const label = document.createElement('label');
+        label.textContent = `Idade da criança ${i + 1}`;
+        const select = document.createElement('select');
+        select.name = `age-${i}`;
+        select.required = true;
+        select.add(new Option('Selecione', ''));
+        for (let age = 0; age <= 17; age++)
+          select.add(
+            new Option(
+              age === 0
+                ? 'Menos de 1 ano'
+                : `${age} ano${age === 1 ? '' : 's'}`,
+              String(age),
+            ),
+          );
+        select.value = existing[i] ?? '';
+        label.append(select);
+        ageFields.append(label);
+      }
+      summary();
+    });
+    form.addEventListener(
+      'invalid',
+      () => {
+        if (ageFields.querySelector(':invalid')) {
+          panel.hidden = false;
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      },
+      true,
+    );
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      error.hidden = true;
+      try {
+        const ages = [...ageFields.querySelectorAll('select')].map((s) =>
+          s.value === '' ? NaN : Number(s.value),
+        );
+        const url = buildBookingURL({
+          checkIn: arrival.value,
+          checkOut: departure.value,
+          adults: Number(adults.value),
+          ages,
+          code: (form.elements.namedItem('code') as HTMLInputElement).value,
+        });
+        window.location.assign(url);
+      } catch (err) {
+        error.textContent = (err as Error).message;
+        error.hidden = false;
+      }
+    });
+  }
+</script>

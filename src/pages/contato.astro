@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Nearby from '../components/Nearby.astro';
+import Map from '../components/Map.astro';
+import CTA from '../components/CTA.astro';
+import { site, phones } from '../data/site';
+const whatsapps = phones.filter((p) => p.kind === 'WhatsApp');
+const landlines = phones.filter((p) => p.kind === 'Telefone');
+---
+
+<Layout
+  title="Como chegar e contato | Rancho Texas Ubatuba"
+  description="Rancho Texas Ubatuba fica na Rodovia Oswaldo Cruz, km 88,9, Horto Florestal, na entrada da cidade. Veja telefones, WhatsApp, e-mail e trace sua rota no mapa."
+  breadcrumb={[{ label: 'Como chegar', href: '/contato' }]}
+>
+  <PageHero
+    title="O caminho para dias mais leves."
+    label="Como chegar e contato"
+    description="Estamos esperando por você no Horto Florestal, em Ubatuba."
+    imageAlt="Prédio da pousada Rancho Texas refletido no lago, cercado de vegetação em Ubatuba"
+    image="rancho-lago"
+  />
+  <section class="section container contact-grid">
+    <div>
+      <span class="eyebrow">VAMOS CONVERSAR</span><h2>
+        Sua viagem<br />começa com um <em>olá.</em>
+      </h2><p>
+        Conte para a gente quando você quer vir. Nossa equipe ajuda com
+        acomodações, camping, casamentos e os detalhes da sua estadia.
+      </p>
+      <ul class="contact-list">
+        {
+          whatsapps.map((p) => (
+            <li>
+              <a
+                class="contact-method"
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <>
+                  <span class="contact-icon">
+                    <Icon name="whatsapp" size={20} />
+                  </span>
+                  <span>
+                    <>
+                      <strong>WhatsApp · {p.label}</strong>
+                      <span>{p.note}</span>
+                    </>
+                  </span>
+                </>
+              </a>
+            </li>
+          ))
+        }
+        {
+          landlines.map((p) => (
+            <li>
+              <a class="contact-method" href={p.href}>
+                <>
+                  <span class="contact-icon">
+                    <Icon name="phone" size={19} />
+                  </span>
+                  <span>
+                    <>
+                      <strong>Telefone · {p.label}</strong>
+                      <span>{p.note}</span>
+                    </>
+                  </span>
+                </>
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a class="contact-method" href={`mailto:${site.email}`}>
+            <span class="contact-icon"><Icon name="mail" size={19} /></span>
+            <span><strong>E-mail</strong><span>{site.email}</span></span>
+          </a>
+        </li>
+      </ul>
+      <div class="contact-social">
+        <span class="footer-title">Acompanhe o Rancho</span>
+        <div>
+          <a
+            href={site.social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            ><Icon name="instagram" size={18} />Instagram</a
+          ><a
+            href={site.social.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            ><Icon name="facebook" size={18} />Facebook</a
+          ><a
+            href={site.social.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            ><Icon name="youtube" size={18} />YouTube</a
+          >
+        </div>
+      </div>
+    </div><div class="contact-map">
+      <Map /><Icon name="pin" size={34} /><h3>
+        Nosso cantinho<br />em Ubatuba.
+      </h3><p>
+        {site.street}<br />{site.district}<br />{site.city} – {site.state}<br
+        />CEP {site.postalCode}
+      </p><a
+        href={site.maps}
+        class="button button-light"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Traçar rota no Google Maps <Icon name="arrow" size={19} /></a
+      ><p class="contact-hint">
+        <Icon name="leaf" size={15} /> Na entrada de Ubatuba para quem desce a Rodovia
+        Oswaldo Cruz.
+      </p>
+    </div>
+  </section><Nearby /><CTA />
+</Layout>
