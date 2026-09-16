@@ -22,6 +22,31 @@ npm run preview
 
 Os arquivos para hospedagem estão em `dist/`. `npm run test:e2e` executa os testes de navegação e acessibilidade com o site iniciado na porta 4321. Instale o navegador com `npx playwright install chromium` na primeira execução.
 
+## Publicação
+
+Repositório: <https://github.com/filipenava/rancho-texas-ubatuba>
+Prévia no ar: <https://filipenava.github.io/rancho-texas-ubatuba/>
+
+Cada push na `main` dispara `.github/workflows/deploy.yml`, que verifica tipos, roda os testes unitários, constrói e publica no GitHub Pages.
+
+**A prévia é `noindex` de propósito.** O site de produção continua no domínio próprio, e uma cópia indexada competiria com ele na busca. O workflow constrói com `PUBLIC_NOINDEX=true`, o que põe `<meta name="robots" content="noindex,follow">` em todas as páginas. Não retire isso enquanto a prévia estiver num endereço que não é o domínio final.
+
+O Pages serve projeto em subdiretório (`/rancho-texas-ubatuba/`), mas o site usa caminhos absolutos como `/acomodacoes` e `/images/foo.webp`. O `base` do Astro resolve os assets que ele processa e não toca em `href` e `src` escritos à mão. Em vez de reescrever 61 pontos do código-fonte e arriscar a build do domínio próprio, `scripts/prefix-base.mjs` faz a reescrita depois do build, sobre o HTML pronto — inclusive dentro do `url()` do CSS embutido, que é de onde saem as fontes. O script também grava `.nojekyll`, sem o qual o Pages ignora a pasta `_astro` e derruba CSS e JS.
+
+### Para colocar no domínio de verdade
+
+1. Decidir o endereço: o domínio raiz (substituindo o site atual) ou um subdomínio como `novo.ranchotexasubatuba.com.br` para revisão.
+2. Apontar o DNS para o provedor escolhido. No Pages, um `CNAME` para `filipenava.github.io` e o domínio configurado em Settings → Pages.
+3. Com domínio próprio o site passa a servir na raiz: **remover o passo `prefix-base` do workflow** e tirar o `PUBLIC_NOINDEX`.
+4. Conferir `site` em `astro.config.mjs` e `site.url` em `src/data/site.ts`.
+5. Aplicar os redirecionamentos de `public/_redirects` na configuração do provedor e enviar o `sitemap-index.xml` ao Google Search Console.
+
+O `netlify.toml` continua no repositório: se preferir Netlify ou Cloudflare Pages, ambos servem na raiz de um subdomínio e dispensam o `prefix-base`.
+
+### O que não foi versionado
+
+`research/originals/` (210 imagens, 115 MB), as folhas de contato, os quadros intermediários de vídeo e os relatórios do Lighthouse ficam de fora: são pesados e reprodutíveis pelos scripts em `scripts/`. Os manifestos JSON ficam versionados porque o build depende deles — `src/components/Photo.astro` importa `research/selected-images.json`. O repositório tem 826 arquivos e 59 MB.
+
 ## Identidade e fotografias
 
 - `research/originals/`: 210 imagens baixadas do site original, incluindo o logo transparente. Três referências estavam indisponíveis na coleta e estão registradas no inventário.
